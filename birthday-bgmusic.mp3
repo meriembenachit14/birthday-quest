@@ -1,0 +1,47 @@
+<body>
+
+  <!-- lahat ng laman ng website mo dito -->
+  <div id="place1">...</div>
+  <div id="place2">...</div>
+  <div id="place3">...</div>
+  <div id="chibi"></div>
+  <div id="finalMessage"></div>
+
+  <!-- DITO MO ILALAGAY YUNG MUSIC BUTTON + AUDIO -->
+  <audio id="bgMusic" src="bgmusic.mp3" loop></audio>
+
+  <button id="musicBtn" style="
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 10px;
+    border: 2px solid #444;
+    background: white;
+    cursor: pointer;
+    z-index: 9999;
+  ">
+  🔊 Music On
+  </button>
+
+  <script>
+    let bgMusic = document.getElementById("bgMusic");
+    let musicBtn = document.getElementById("musicBtn");
+
+    document.body.addEventListener("click", () => {
+      if (bgMusic.paused) bgMusic.play();
+    }, { once: true });
+
+    musicBtn.addEventListener("click", () => {
+      if (bgMusic.paused) {
+        bgMusic.play();
+        musicBtn.textContent = "🔊 Music On";
+      } else {
+        bgMusic.pause();
+        musicBtn.textContent = "🔈 Music Off";
+      }
+    });
+  </script>
+
+</body>
