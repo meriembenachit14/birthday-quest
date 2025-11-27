@@ -13,6 +13,7 @@
       background: #b3e5fc;
     }
 
+    /* PLACE SCREENS */
     .place {
       width: 100vw;
       height: 100vh;
@@ -28,26 +29,30 @@
     #place2 { background: url('place2.png') center/cover no-repeat; }
     #place3 { background: url('place3.png') center/cover no-repeat; }
 
-    /* CHIBI CHARACTER */
+    /* CHIBI CHARACTER — bounce only */
     #chibi {
       position: absolute;
       bottom: 20px;
       left: 20px;
-      width: 80px;
-      height: 80px;
-      background-image: url('chibi-walk.png');
-      background-size: 320px 80px;
-      background-position: 0 0;
+      width: 120px;
+      height: 120px;
+      background-image: url('cute-chibi.png');
+      background-size: contain;
+      background-repeat: no-repeat;
       filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
-      transition: left 0.18s linear, transform 0.2s;
-      animation: bounce 0.4s ease-in-out infinite alternate;
+
+      /* bouncing animation */
+      animation: bounce 0.5s ease-in-out infinite alternate;
+
+      transition: left 0.15s linear, transform 0.15s;
     }
 
     @keyframes bounce {
       from { transform: translateY(0); }
-      to { transform: translateY(-8px); }
+      to { transform: translateY(-10px); }
     }
 
+    /* BUTTON */
     .next-btn {
       position: absolute;
       bottom: 20px;
@@ -63,6 +68,7 @@
 
     .next-btn:hover { background: #f4f4f4; }
 
+    /* FINAL MESSAGE */
     #finalMessage {
       position: fixed;
       top: 0;
@@ -82,12 +88,11 @@
       transition: opacity 1s ease;
     }
 
-    /* CONFETTI */
+    /* CONFETTI STYLE */
     .confetti {
       position: fixed;
       width: 10px;
       height: 10px;
-      background: red;
       top: -10px;
       animation: fall linear forwards;
     }
@@ -103,6 +108,7 @@
 
 <body>
 
+  <!-- PLACES -->
   <div id="place1" class="place" style="transform: translateX(0%);">
     <h1>✨ Place 1: Magical Balloon Field 🎈</h1>
     <div class="next-btn" onclick="goNext(1)">Go to Next Place →</div>
@@ -118,8 +124,10 @@
     <div class="next-btn" onclick="finishQuest()">Finish Quest →</div>
   </div>
 
+  <!-- CHIBI -->
   <div id="chibi"></div>
 
+  <!-- FINAL MESSAGE -->
   <div id="finalMessage">
     <div>
       <h2>🎂 Happy Birthday Ate Rachelle! 🎉</h2>
@@ -127,6 +135,7 @@
     </div>
   </div>
 
+  <!-- SOUNDS -->
   <audio id="stepSound" src="step.mp3"></audio>
   <audio id="celebrateSound" src="celebrate.mp3"></audio>
 
@@ -139,22 +148,30 @@ function goNext(place) {
   document.getElementById("place1").style.transform = `translateX(${-(place)*100}%)`;
   document.getElementById("place2").style.transform = `translateX(${-(place-1)*100}%)`;
   document.getElementById("place3").style.transform = `translateX(${-(place-2)*100}%)`;
+
   chibi.style.left = "20px";
   moveChibi();
 }
 
 function moveChibi() {
   let pos = 20;
+
+  /* make her face right */
   chibi.style.transform = "scaleX(1)";
 
   let interval = setInterval(() => {
-    pos += 6;
+    pos += 7;
     chibi.style.left = pos + "px";
+
     stepSound.currentTime = 0;
     stepSound.play();
 
-    if (pos > window.innerWidth - 120) {
+    if (pos > window.innerWidth - 140) {
       clearInterval(interval);
+      /* make her face left after arriving */
+      setTimeout(() => {
+        chibi.style.transform = "scaleX(-1)";
+      }, 300);
     }
   }, 90);
 }
@@ -167,12 +184,14 @@ function finishQuest() {
 }
 
 function launchConfetti() {
-  for (let i = 0; i < 120; i++) {
+  for (let i = 0; i < 150; i++) {
     let conf = document.createElement("div");
     conf.classList.add("confetti");
+
     conf.style.left = Math.random() * 100 + "vw";
     conf.style.background = `hsl(${Math.random()*360}, 100%, 50%)`;
     conf.style.animationDuration = (2 + Math.random() * 3) + "s";
+
     document.body.appendChild(conf);
     setTimeout(() => conf.remove(), 5000);
   }
