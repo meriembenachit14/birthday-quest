@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Birthday Quest for Ate Rachelle</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial;
+      background: #b3e5fc;
+    }
+
+    /* Sections / Places */
+    .place {
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: transform 1.2s ease;
+    }
+
+    #place1 { background: linear-gradient(#b3e5fc, #81d4fa); }
+    #place2 { background: linear-gradient(#a5d6a7, #81c784); }
+    #place3 { background: linear-gradient(#ffe082, #ffca28); }
+
+    /* Chibi Character */
+    #chibi {
+      position: absolute;
+      bottom: 30px;
+      left: 20px;
+      width: 80px;
+      height: 80px;
+      background: pink;
+      border-radius: 50%; /* placeholder chibi */
+      transition: left 0.2s;
+    }
+
+    /* Next Button */
+    .next-btn {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      background: white;
+      border-radius: 12px;
+      cursor: pointer;
+      border: 2px solid #444;
+      font-weight: bold;
+    }
+
+    /* Message */
+    #finalMessage {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 2rem;
+      text-align: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PLACES -->
+  <div id="place1" class="place" style="transform: translateX(0%);">
+    <h1 style="padding:20px;">Place 1: The Balloon Field 🎈</h1>
+    <div class="next-btn" onclick="goNext(1)">Go to Next Place →</div>
+  </div>
+
+  <div id="place2" class="place" style="transform: translateX(100%);">
+    <h1 style="padding:20px;">Place 2: The Forest Path 🌳</h1>
+    <div class="next-btn" onclick="goNext(2)">Go to Next Place →</div>
+  </div>
+
+  <div id="place3" class="place" style="transform: translateX(200%);">
+    <h1 style="padding:20px;">Place 3: The Celebration Hill 🎉</h1>
+    <div class="next-btn" onclick="finishQuest()">Finish Quest →</div>
+  </div>
+
+  <!-- Chibi Character -->
+  <div id="chibi"></div>
+
+  <!-- Final Message -->
+  <div id="finalMessage">
+    <div>
+      <h2>Happy Birthday Ate Rachelle! 🎉</h2>
+      <p>Wishing you joy, love, and blessings on your special day!</p>
+    </div>
+  </div>
+
+  <script>
+    let currentPlace = 1;
+    let chibi = document.getElementById("chibi");
+
+    function goNext(place) {
+      currentPlace = place + 1;
+
+      document.getElementById("place1").style.transform = `translateX(${-(place)*100}%)`;
+      document.getElementById("place2").style.transform = `translateX(${-(place-1)*100}%)`;
+      document.getElementById("place3").style.transform = `translateX(${-(place-2)*100}%)`;
+
+      // Move chibi to start each time
+      chibi.style.left = "20px";
+      walkChibi();
+    }
+
+    function walkChibi() {
+      let pos = 20;
+      let interval = setInterval(() => {
+        pos += 5;
+        chibi.style.left = pos + "px";
+        
+        if (pos > window.innerWidth - 100) {
+          clearInterval(interval);
+        }
+      }, 120);
+    }
+
+    function finishQuest() {
+      // Move places offscreen
+      document.getElementById("place1").style.transform = "translateX(-300%)";
+      document.getElementById("place2").style.transform = "translateX(-200%)";
+      document.getElementById("place3").style.transform = "translateX(-100%)";
+
+      // Show message
+      document.getElementById("finalMessage").style.opacity = 1;
+      document.getElementById("finalMessage").style.pointerEvents = "auto";
+    }
+
+    // Start walking at beginning
+    walkChibi();
+  </script>
+
+</body>
+</html>
