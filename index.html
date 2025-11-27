@@ -103,7 +103,7 @@
 <body>
 
   <!-- BACKGROUND MUSIC -->
-  <audio id="bgmusic" src="birthday-bgmusic.mp3" autoplay loop></audio>
+  <audio id="bgmusic" src="birthday-bgmusic.mp3" loop></audio>
 
   <div id="place1" class="place" style="transform: translateX(0%);">
     <h1>✨ Place 1: Magical Balloon Field 🎈</h1>
@@ -137,21 +137,32 @@
 let chibi = document.getElementById("chibi");
 let stepSound = document.getElementById("stepSound");
 let celebrateSound = document.getElementById("celebrateSound");
+let bgmusic = document.getElementById("bgmusic");
+let musicStarted = false;
+
+// START MUSIC ON FIRST CLICK
+function startMusic() {
+  if (!musicStarted) {
+    bgmusic.volume = 0.6; 
+    bgmusic.play();
+    musicStarted = true;
+  }
+}
 
 function goNext(place) {
+  startMusic();
+
   document.getElementById("place1").style.transform = `translateX(${-(place)*100}%)`;
   document.getElementById("place2").style.transform = `translateX(${-(place-1)*100}%)`;
   document.getElementById("place3").style.transform = `translateX(${-(place-2)*100}%)`;
 
-  // reset chibi position
   chibi.style.left = "20px";
-
   moveChibi();
 }
 
 function moveChibi() {
   let pos = 20;
-  chibi.style.transform = "scaleX(1)"; // face right
+  chibi.style.transform = "scaleX(1)";
 
   let interval = setInterval(() => {
     pos += 7;
@@ -162,14 +173,17 @@ function moveChibi() {
 
     if (pos > window.innerWidth - 150) {
       clearInterval(interval);
-      chibi.style.transform = "scaleX(-1)"; // face left end
+      chibi.style.transform = "scaleX(-1)";
     }
   }, 90);
 }
 
 function finishQuest() {
+  startMusic();
+
   document.getElementById("finalMessage").style.opacity = 1;
   document.getElementById("finalMessage").style.pointerEvents = "auto";
+
   celebrateSound.play();
   launchConfetti();
 }
@@ -182,7 +196,6 @@ function launchConfetti() {
     conf.style.background = `hsl(${Math.random()*360}, 100%, 50%)`;
     conf.style.animationDuration = (2 + Math.random() * 3) + "s";
     document.body.appendChild(conf);
-
     setTimeout(() => conf.remove(), 5000);
   }
 }
