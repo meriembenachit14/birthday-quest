@@ -9,10 +9,10 @@
     body {
       margin: 0;
       overflow: hidden;
-      font-family: Arial;
+      font-family: Arial, sans-serif;
+      background: #b3e5fc;
     }
 
-    /* PLACES */
     .place {
       width: 100vw;
       height: 100vh;
@@ -28,26 +28,26 @@
     #place2 { background: url('place2.jpg') center/cover no-repeat; }
     #place3 { background: url('place3.jpg') center/cover no-repeat; }
 
-    /* CHIBI (STEADY BOUNCE + LEFT/RIGHT FLIP) */
+    /* --- CHIBI --- */
     #chibi {
       position: absolute;
       bottom: 20px;
       left: 20px;
-      width: 120px;
-      height: 120px;
+      width: 110px;
+      height: 110px;
       background-image: url('cute-chibi.png');
-      background-size: cover;
+      background-size: contain;
+      background-repeat: no-repeat;
       filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
-      animation: bounce 0.5s ease-in-out infinite alternate;
       transition: left 0.18s linear, transform 0.2s;
+      animation: bounce 0.5s ease-in-out infinite alternate;
     }
 
     @keyframes bounce {
       from { transform: translateY(0); }
-      to   { transform: translateY(-10px); }
+      to { transform: translateY(-10px); }
     }
 
-    /* NEXT BUTTON */
     .next-btn {
       position: absolute;
       bottom: 20px;
@@ -63,14 +63,13 @@
 
     .next-btn:hover { background: #f4f4f4; }
 
-    /* FINAL MESSAGE */
     #finalMessage {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0,0,0,0.65);
+      background: rgba(0,0,0,0.7);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -88,7 +87,6 @@
       position: fixed;
       width: 10px;
       height: 10px;
-      background: red;
       top: -10px;
       animation: fall linear forwards;
     }
@@ -103,6 +101,9 @@
 </head>
 
 <body>
+
+  <!-- BACKGROUND MUSIC -->
+  <audio id="bgmusic" src="birthday-bgmusic.mp3" autoplay loop></audio>
 
   <div id="place1" class="place" style="transform: translateX(0%);">
     <h1>✨ Place 1: Magical Balloon Field 🎈</h1>
@@ -128,6 +129,7 @@
     </div>
   </div>
 
+  <!-- SOUND EFFECTS -->
   <audio id="stepSound" src="step.mp3"></audio>
   <audio id="celebrateSound" src="celebrate.mp3"></audio>
 
@@ -140,47 +142,47 @@ function goNext(place) {
   document.getElementById("place1").style.transform = `translateX(${-(place)*100}%)`;
   document.getElementById("place2").style.transform = `translateX(${-(place-1)*100}%)`;
   document.getElementById("place3").style.transform = `translateX(${-(place-2)*100}%)`;
-  
-  // reset pos
+
+  // reset chibi position
   chibi.style.left = "20px";
 
-  // face right
-  chibi.style.transform = "scaleX(1)";
   moveChibi();
 }
 
 function moveChibi() {
   let pos = 20;
+  chibi.style.transform = "scaleX(1)"; // face right
 
   let interval = setInterval(() => {
-    pos += 6;
+    pos += 7;
     chibi.style.left = pos + "px";
 
     stepSound.currentTime = 0;
     stepSound.play();
 
-    if (pos > window.innerWidth - 140) {
+    if (pos > window.innerWidth - 150) {
       clearInterval(interval);
+      chibi.style.transform = "scaleX(-1)"; // face left end
     }
-  }, 100);
+  }, 90);
 }
 
 function finishQuest() {
   document.getElementById("finalMessage").style.opacity = 1;
   document.getElementById("finalMessage").style.pointerEvents = "auto";
-
   celebrateSound.play();
   launchConfetti();
 }
 
 function launchConfetti() {
-  for (let i = 0; i < 120; i++) {
+  for (let i = 0; i < 150; i++) {
     let conf = document.createElement("div");
     conf.classList.add("confetti");
     conf.style.left = Math.random() * 100 + "vw";
     conf.style.background = `hsl(${Math.random()*360}, 100%, 50%)`;
     conf.style.animationDuration = (2 + Math.random() * 3) + "s";
     document.body.appendChild(conf);
+
     setTimeout(() => conf.remove(), 5000);
   }
 }
