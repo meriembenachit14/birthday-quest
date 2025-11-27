@@ -13,7 +13,6 @@
       background: #b3e5fc;
     }
 
-    /* PLACE SCREENS */
     .place {
       width: 100vw;
       height: 100vh;
@@ -29,27 +28,26 @@
     #place2 { background: linear-gradient(#a5d6a7, #81c784); }
     #place3 { background: linear-gradient(#ffe082, #ffca28); }
 
-    /* CHIBI CHARACTER (Walking Animation) */
+    /* CHIBI CHARACTER */
     #chibi {
       position: absolute;
       bottom: 20px;
       left: 20px;
-      width: 80px;          /* width of 1 frame */
-      height: 80px;         /* height of 1 frame */
+      width: 80px;
+      height: 80px;
       background-image: url('chibi-walk.png');
-      background-size: 320px 80px;   /* 4 frames (80px × 4 = 320px) */
-      animation: walk 0.6s steps(4) infinite;
-      filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.4));
-      transition: left 0.18s linear;
+      background-size: 320px 80px;
+      background-position: 0 0;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+      transition: left 0.18s linear, transform 0.2s;
+      animation: bounce 0.4s ease-in-out infinite alternate;
     }
 
-    /* WALKING KEYFRAMES */
-    @keyframes walk {
-      0%   { background-position:   0px 0; }
-      100% { background-position: -320px 0; }
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-8px); }
     }
 
-    /* NEXT BUTTON */
     .next-btn {
       position: absolute;
       bottom: 20px;
@@ -63,11 +61,8 @@
       box-shadow: 0 3px 6px rgba(0,0,0,0.25);
     }
 
-    .next-btn:hover {
-      background: #f4f4f4;
-    }
+    .next-btn:hover { background: #f4f4f4; }
 
-    /* FINAL MESSAGE */
     #finalMessage {
       position: fixed;
       top: 0;
@@ -86,12 +81,28 @@
       pointer-events: none;
       transition: opacity 1s ease;
     }
+
+    /* CONFETTI */
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: red;
+      top: -10px;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(120vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 
 <body>
 
-  <!-- PLACES -->
   <div id="place1" class="place" style="transform: translateX(0%);">
     <h1>✨ Place 1: Magical Balloon Field 🎈</h1>
     <div class="next-btn" onclick="goNext(1)">Go to Next Place →</div>
@@ -107,10 +118,8 @@
     <div class="next-btn" onclick="finishQuest()">Finish Quest →</div>
   </div>
 
-  <!-- CHIBI CHARACTER -->
   <div id="chibi"></div>
 
-  <!-- FINAL MESSAGE -->
   <div id="finalMessage">
     <div>
       <h2>🎂 Happy Birthday Ate Rachelle! 🎉</h2>
@@ -118,37 +127,57 @@
     </div>
   </div>
 
-  <script>
-    let chibi = document.getElementById("chibi");
+  <audio id="stepSound" src="step.mp3"></audio>
+  <audio id="celebrateSound" src="celebrate.mp3"></audio>
 
-    function goNext(place) {
-      document.getElementById("place1").style.transform = `translateX(${-(place)*100}%)`;
-      document.getElementById("place2").style.transform = `translateX(${-(place-1)*100}%)`;
-      document.getElementById("place3").style.transform = `translateX(${-(place-2)*100}%)`;
+<script>
+let chibi = document.getElementById("chibi");
+let stepSound = document.getElementById("stepSound");
+let celebrateSound = document.getElementById("celebrateSound");
 
-      chibi.style.left = "20px";
-      walkChibi();
+function goNext(place) {
+  document.getElementById("place1").style.transform = `translateX(${-(place)*100}%)`;
+  document.getElementById("place2").style.transform = `translateX(${-(place-1)*100}%)`;
+  document.getElementById("place3").style.transform = `translateX(${-(place-2)*100}%)`;
+  chibi.style.left = "20px";
+  moveChibi();
+}
+
+function moveChibi() {
+  let pos = 20;
+  chibi.style.transform = "scaleX(1)";
+
+  let interval = setInterval(() => {
+    pos += 6;
+    chibi.style.left = pos + "px";
+    stepSound.currentTime = 0;
+    stepSound.play();
+
+    if (pos > window.innerWidth - 120) {
+      clearInterval(interval);
     }
+  }, 90);
+}
 
-    function walkChibi() {
-      let pos = 20;
-      let interval = setInterval(() => {
-        pos += 6;
-        chibi.style.left = pos + "px";
+function finishQuest() {
+  document.getElementById("finalMessage").style.opacity = 1;
+  document.getElementById("finalMessage").style.pointerEvents = "auto";
+  celebrateSound.play();
+  launchConfetti();
+}
 
-        if (pos > window.innerWidth - 120) {
-          clearInterval(interval);
-        }
-      }, 60);
-    }
-
-    function finishQuest() {
-      document.getElementById("finalMessage").style.opacity = 1;
-      document.getElementById("finalMessage").style.pointerEvents = "auto";
-    }
-
-    walkChibi();  
-  </script>
+function launchConfetti() {
+  for (let i = 0; i < 120; i++) {
+    let conf = document.createElement("div");
+    conf.classList.add("confetti");
+    conf.style.left = Math.random() * 100 + "vw";
+    conf.style.background = `hsl(${Math.random()*360}, 100%, 50%)`;
+    conf.style.animationDuration = (2 + Math.random() * 3) + "s";
+    document.body.appendChild(conf);
+    setTimeout(() => conf.remove(), 5000);
+  }
+}
+</script>
 
 </body>
 </html>
