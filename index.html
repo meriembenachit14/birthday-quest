@@ -97,13 +97,41 @@
         opacity: 0;
       }
     }
+
+    /* --- VOLUME SLIDER --- */
+    #volumeControl {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.85);
+      padding: 12px 18px;
+      border-radius: 14px;
+      border: 2px solid #444;
+      backdrop-filter: blur(5px);
+      font-size: 14px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.25);
+    }
+
+    #volumeControl input[type="range"] {
+      width: 130px;
+    }
   </style>
 </head>
 
 <body>
 
   <!-- BACKGROUND MUSIC -->
-  <audio id="bgmusic" src="birthday-bgmusic.mp3" loop></audio>
+  <audio id="bgmusic" src="birthday-bgmusic.mp3" autoplay loop></audio>
+
+  <!-- Volume Slider -->
+  <div id="volumeControl">
+    <span>🔊</span>
+    <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+  </div>
 
   <div id="place1" class="place" style="transform: translateX(0%);">
     <h1>✨ Place 1: Magical Balloon Field 🎈</h1>
@@ -137,21 +165,14 @@
 let chibi = document.getElementById("chibi");
 let stepSound = document.getElementById("stepSound");
 let celebrateSound = document.getElementById("celebrateSound");
-let bgmusic = document.getElementById("bgmusic");
-let musicStarted = false;
+let bgm = document.getElementById("bgmusic");
+let volSlider = document.getElementById("volume");
 
-// START MUSIC ON FIRST CLICK
-function startMusic() {
-  if (!musicStarted) {
-    bgmusic.volume = 0.6; 
-    bgmusic.play();
-    musicStarted = true;
-  }
-}
+volSlider.addEventListener("input", () => {
+  bgm.volume = volSlider.value;
+});
 
 function goNext(place) {
-  startMusic();
-
   document.getElementById("place1").style.transform = `translateX(${-(place)*100}%)`;
   document.getElementById("place2").style.transform = `translateX(${-(place-1)*100}%)`;
   document.getElementById("place3").style.transform = `translateX(${-(place-2)*100}%)`;
@@ -179,11 +200,8 @@ function moveChibi() {
 }
 
 function finishQuest() {
-  startMusic();
-
   document.getElementById("finalMessage").style.opacity = 1;
   document.getElementById("finalMessage").style.pointerEvents = "auto";
-
   celebrateSound.play();
   launchConfetti();
 }
@@ -196,6 +214,7 @@ function launchConfetti() {
     conf.style.background = `hsl(${Math.random()*360}, 100%, 50%)`;
     conf.style.animationDuration = (2 + Math.random() * 3) + "s";
     document.body.appendChild(conf);
+
     setTimeout(() => conf.remove(), 5000);
   }
 }
